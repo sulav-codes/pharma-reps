@@ -12,7 +12,8 @@ async def chat(payload: dict):
     user_input = payload.get("message")
     if not user_input:
         raise HTTPException(status_code=400, detail="Missing message")
-    response = await run_agent(user_input)
+    force_intent = payload.get("intent") or payload.get("force_intent")
+    response = await run_agent(user_input, force_intent=force_intent or None)    
     return response
 
 
