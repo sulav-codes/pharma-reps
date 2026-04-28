@@ -1,41 +1,46 @@
-import time
 from typing import Optional
 
 from groq import Groq
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.config import settings
 
 
-_client: Optional[Groq] = None
+client: Optional[Groq] = None
 
 
 def _get_client() -> Groq:
-    global _client
-    if _client is None:
+    global client
+    if client is None:
         if not settings.groq_api_key:
             raise ValueError("GROQ_API_KEY is not set")
-        _client = Groq(api_key=settings.groq_api_key)
-    return _client
+        client = Groq(api_key=settings.groq_api_key)
+    return client
+
+
+def _to_groq_message(message) -> dict:
+    role = "user"
+    content = str(getattr(message, "content", ""))
+    if isinstance(message, SystemMessage):
+        role = "system"
+    elif isinstance(message, HumanMessage):
+        role = "user"
+    return {"role": role, "content": content}
 
 
 async def call_llm(prompt: str, system: Optional[str] = None) -> str:
     client = _get_client()
     messages = []
     if system:
-        messages.append({"role": "system", "content": system})
-    messages.append({"role": "user", "content": prompt})
+        messages.append(SystemMessage(content=system))
+    messages.append(HumanMessage(content=prompt))
 
-    last_error = None
-    for attempt in range(2):
-        try:
-            response = client.chat.completions.create(
-                model=settings.groq_model,
-                messages=messages,
-                temperature=0,
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as exc:  # pragma: no cover - MVP safety net
-            last_error = exc
-            time.sleep(0.5)
-
-    raise RuntimeError(f"LLM call failed: {last_error}")
+    response = client.chat.completions.create(
+        model=settings.groq_model,
+        messages=[_to_groq_message(message) for message in messages],
+        temperature=0,
+    )
+    if not response.choices:
+        return ""
+    content = response.choices[0].message.content
+    return content.strip() if content else ""
