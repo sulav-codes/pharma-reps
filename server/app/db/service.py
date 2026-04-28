@@ -32,6 +32,8 @@ def init_db() -> None:
 def _parse_datetime(value: Optional[str]) -> Optional[datetime]:
 	if not value:
 		return None
+	if isinstance(value, datetime):
+		return value
 	try:
 		return datetime.fromisoformat(value)
 	except ValueError:
