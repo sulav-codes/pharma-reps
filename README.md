@@ -2,12 +2,11 @@
 
 ## Backend (FastAPI)
 
-1. Set environment variables:
+1. Set environment variables (Postgres required):
    - `GROQ_API_KEY`
-   - `GROQ_MODEL` (default: `gemma2-9b-it`)
+   - `GROQ_MODEL` (default: `llama-3.1-8b-instant`)
    - `SUPABASE_DATABASE_URL` (preferred) or `DATABASE_URL`
-     - Example: `postgresql://USER:PASSWORD@HOST:5432/postgres?sslmode=require`
-     - If you see a `postgres://` URL, it is normalized to `postgresql://` at runtime.
+   - Example: `postgresql://USER:PASSWORD@HOST:5432/postgres?sslmode=require`
 
 2. Run the API from the `api/` folder:
 
