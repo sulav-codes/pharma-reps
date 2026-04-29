@@ -7,7 +7,7 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto">
         <InteractionForm />
       </div>
-      <div className="w-1/3 border-l border-slate-200 absoulute right-0 top-0">
+      <div className="w-1/3 border-l border-slate-200">
         <ChatPanel />
       </div>
     </div>

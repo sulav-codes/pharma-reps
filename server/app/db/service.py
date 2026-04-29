@@ -43,13 +43,14 @@ def _parse_datetime(value: Optional[str]) -> Optional[datetime]:
 def save_interaction(data: dict) -> Interaction:
 	interaction = Interaction(
 		hcp_name=str(data.get("hcp_name") or "").strip() or "Unknown",
-		product=_clean_str(data.get("product")),
-		summary=_clean_str(data.get("summary")),
+		topics_discussed=_clean_str(data.get("topics_discussed")),
+		materials_shared=_clean_str(data.get("materials_shared")),
+		samples_distributed=_clean_str(data.get("samples_distributed")),
 		follow_up=_clean_str(data.get("follow_up")),
 		sentiment=_clean_str(data.get("sentiment")),
 		interaction_type=_clean_str(data.get("interaction_type")),
 		occurred_at=_parse_datetime(data.get("occurred_at")),
-		raw_text=_clean_str(data.get("raw_text")),
+		attendees=_clean_str(data.get("attendees")),
 	)
 
 	with Session(engine) as session:
@@ -85,12 +86,13 @@ def get_interactions_by_hcp(hcp_name: str, limit: int = 20) -> Iterable[Interact
 def _apply_updates(interaction: Interaction, updates: dict) -> None:
 	for field in [
 		"hcp_name",
-		"product",
-		"summary",
+		"topics_discussed",
+		"materials_shared",
+		"samples_distributed",
 		"follow_up",
 		"sentiment",
 		"interaction_type",
-		"raw_text",
+		"attendees",
 	]:
 		if field in updates and updates[field] is not None:
 			setattr(interaction, field, _clean_str(updates[field]))

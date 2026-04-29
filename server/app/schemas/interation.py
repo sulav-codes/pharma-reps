@@ -6,13 +6,14 @@ from pydantic import BaseModel
 
 class InteractionBase(BaseModel):
 	hcp_name: str
-	product: Optional[str] = None
-	summary: Optional[str] = None
+	topics_discussed: Optional[str] = None
+	materials_shared: Optional[str] = None
+	samples_distributed: Optional[str] = None
 	follow_up: Optional[str] = None
 	sentiment: Optional[str] = None
 	interaction_type: Optional[str] = None
 	occurred_at: Optional[datetime] = None
-	raw_text: Optional[str] = None
+	attendees: Optional[str] = None
 
 
 class InteractionCreate(InteractionBase):
@@ -21,13 +22,14 @@ class InteractionCreate(InteractionBase):
 
 class InteractionUpdate(BaseModel):
 	hcp_name: Optional[str] = None
-	product: Optional[str] = None
-	summary: Optional[str] = None
+	topics_discussed: Optional[str] = None
+	materials_shared: Optional[str] = None
+	samples_distributed: Optional[str] = None
 	follow_up: Optional[str] = None
 	sentiment: Optional[str] = None
 	interaction_type: Optional[str] = None
 	occurred_at: Optional[datetime] = None
-	raw_text: Optional[str] = None
+	attendees: Optional[str] = None
 
 
 class InteractionOut(InteractionBase):

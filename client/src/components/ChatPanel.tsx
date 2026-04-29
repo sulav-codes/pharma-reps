@@ -130,20 +130,42 @@ function buildAssistantResponse(response: ChatResponse) {
   return "Response received. Review the form for details.";
 }
 
+const pad2 = (value: number) => value.toString().padStart(2, "0");
+
+const toInputDateTime = (value?: string) => {
+  if (!value) {
+    return { date: "", time: "" };
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return { date: "", time: "" };
+  }
+  return {
+    date: `${parsed.getFullYear()}-${pad2(parsed.getMonth() + 1)}-${pad2(
+      parsed.getDate(),
+    )}`,
+    time: `${pad2(parsed.getHours())}:${pad2(parsed.getMinutes())}`,
+  };
+};
+
 function toFormState(data: InteractionRecord) {
+  const { date, time } = toInputDateTime(data.occurred_at);
   return {
     hcp_name: data.hcp_name || "",
-    product: data.product || "",
-    topics_discussed: data.summary || "",
+    interaction_type: data.interaction_type || "",
+    topics_discussed: data.topics_discussed || "",
     voice_note_consent: false,
     voice_note_summary: "",
-    materials_shared: "",
+    materials_shared: data.materials_shared || "",
     brochures_shared: false,
     q_search: "",
-    samples_distributed: "",
+    samples_distributed: data.samples_distributed || "",
     no_samples: false,
     sentiment: data.sentiment || "",
     outcomes: "",
     follow_up_actions: data.follow_up || "",
+    date,
+    time,
+    attendees: data.attendees || "",
   };
 }

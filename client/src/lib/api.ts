@@ -1,12 +1,13 @@
 export type InteractionPayload = {
   hcp_name: string;
-  product?: string;
-  summary?: string;
+  topics_discussed?: string;
+  materials_shared?: string;
+  samples_distributed?: string;
   follow_up?: string;
   sentiment?: string;
   interaction_type?: string;
   occurred_at?: string;
-  raw_text?: string;
+  attendees?: string;
 };
 
 export type InteractionRecord = InteractionPayload & {

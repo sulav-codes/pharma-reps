@@ -78,45 +78,23 @@ export default function InteractionForm() {
     dispatch(setStatus("saving"));
     setNote(null);
 
-    const summaryParts = [] as string[];
-    if (form.topics_discussed) {
-      summaryParts.push(`Topics Discussed: ${form.topics_discussed}`);
-    }
-    if (form.outcomes) {
-      summaryParts.push(`Outcomes: ${form.outcomes}`);
-    }
-    if (form.voice_note_consent && form.voice_note_summary) {
-      summaryParts.push(`Voice Note Summary: ${form.voice_note_summary}`);
-    }
-
-    const samples = form.no_samples
-      ? []
-      : form.samples_distributed
-          .split("\n")
-          .map((item) => item.replace(/^[-*]\s*/, "").trim())
-          .filter(Boolean);
-
-    const raw_text = JSON.stringify({
-      materials_shared: form.materials_shared,
-      brochures_shared: form.brochures_shared,
-      q_search: form.q_search,
-      samples_distributed: samples,
-      no_samples: form.no_samples,
-    });
+    const topicsDiscussed = form.topics_discussed.trim();
+    const materialsShared = form.materials_shared.trim();
+    const samplesDistributed = form.samples_distributed.trim();
 
     try {
       const occurredAt = buildOccurredAt(form.date, form.time);
 
       const response = await createInteraction({
         hcp_name: form.hcp_name,
-        product: form.product,
-        interaction_type: form.product || undefined,
-        summary: summaryParts.join("\n\n") || undefined,
+        interaction_type: form.interaction_type || undefined,
+        topics_discussed: topicsDiscussed || undefined,
+        materials_shared: materialsShared || undefined,
+        samples_distributed: samplesDistributed || undefined,
         follow_up: form.follow_up_actions || undefined,
         sentiment: form.sentiment || undefined,
         occurred_at: occurredAt || undefined,
         attendees: form.attendees || undefined,
-        raw_text,
       });
 
       dispatch(setStatus("saved"));
@@ -125,14 +103,16 @@ export default function InteractionForm() {
         dispatch(
           setForm({
             hcp_name: response.hcp_name || "",
-            product: response.product || response.interaction_type || "",
-            topics_discussed: response.summary || "",
+            interaction_type: response.interaction_type || "",
+            topics_discussed: response.topics_discussed || "",
             voice_note_consent: form.voice_note_consent,
             voice_note_summary: form.voice_note_summary,
-            materials_shared: form.materials_shared,
+            materials_shared:
+              response.materials_shared || form.materials_shared,
             brochures_shared: form.brochures_shared,
             q_search: form.q_search,
-            samples_distributed: form.samples_distributed,
+            samples_distributed:
+              response.samples_distributed || form.samples_distributed,
             no_samples: form.no_samples,
             sentiment: response.sentiment || "",
             outcomes: form.outcomes,
@@ -203,10 +183,10 @@ export default function InteractionForm() {
             <label className={labelClasses}>Interaction Type</label>
             <select
               className={inputBaseClasses}
-              value={form.product}
+              value={form.interaction_type}
               onChange={(event) =>
                 dispatch(
-                  setField({ field: "product", value: event.target.value }),
+                  setField({ field: "interaction_type", value: event.target.value }),
                 )
               }
             >
