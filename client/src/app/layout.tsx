@@ -21,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="app-body">
+    <html lang="en" className={inter.className}>
+      <body className="min-h-screen bg-linear-to-b from-slate-50 to-slate-100 text-slate-900 antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>
